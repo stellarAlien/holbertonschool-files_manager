@@ -14,15 +14,15 @@ class RedisClient {
     return this.client.connected;
   }
 
-  get(key) {
+  async get(key) {
     return this.getClient(key);
   }
 
-  set(key, value) {
+  async set(key, value) {
     this.client.set(key, value, redis.print);
   }
 
-  del(key) {
+  async del(key) {
     this.client.del(key);
   }
 }
