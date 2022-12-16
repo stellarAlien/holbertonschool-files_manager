@@ -33,4 +33,5 @@ class DBClient {
 
 
 
-export {DBClient as DBClient}
+export {DBClient as dbClient};
+    
