@@ -1,12 +1,12 @@
 const express = require('express');
 
-import {getStatus, getStats} from '../controllers/AppController';
+import AppController from '../controllers/AppController';
 app = new express();
 
-app.get('/status', (req,res)=>{
-    getStatus();
-});
+const router = express.Router();
 
-app.get('/stats', (req, res)=>{
-    getStats();
-});
+router.get('/status', AppController.getStatus);
+
+router.get('/stats', AppController.getStats);
+
+router.post('/users', UserController.postNew);
