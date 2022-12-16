@@ -1,6 +1,9 @@
 const express = require('express');
 
 import AppController from '../controllers/AppController';
+
+import UserController from '../controllers/UsersController';
+
 app = new express();
 
 const router = express.Router();
