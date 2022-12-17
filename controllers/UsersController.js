@@ -1,3 +1,4 @@
+import { getMaxListeners } from "process";
 import { dbClient } from "../utils/db";
 const crypto = require('crypto');
 
@@ -20,6 +21,19 @@ class UserController{
             
             res.status(201).json({"_id" : id,  "email": email, "password": hashed_password});
             })}
+        
+    static getMe(req, res){
+        if(req.headers['X-Token']){ token = req.headers['X-Token'];}
+
+            dbClient.db.collection('users').find(token).toArray((err, doc)=>{
+                if(doc){
+                    
+                }
+            });
+
         };
+    }
+
+       
 
 export {UserController as UserController};

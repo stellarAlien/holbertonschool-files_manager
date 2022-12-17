@@ -15,11 +15,13 @@ class RedisClient {
   }
 
   async get(key) {
-    return this.getClient(key);
+    return this.getClient(key); //client.get(key, (err, value)=>{}) ??
   }
 
+
   async set(key, value) {
-    this.client.set(key, value, redis.print);
+    this.client.set(key, value, redis.print); //set(key, value, 'EX', -1, redis.print) to not use expire in other files
+
   }
 
   async del(key) {
