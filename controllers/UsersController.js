@@ -22,13 +22,14 @@ class UserController{
             res.status(201).json({"_id" : id,  "email": email, "password": hashed_password});
             })}
         
-    static getMe(req, res){
+    static getMe(req, res, next){
         if(req.headers['X-Token']){ token = req.headers['X-Token'];}
 
             dbClient.db.collection('users').find(token).toArray((err, doc)=>{
                 if(doc){
-                    
-                }
+                    res.json({"id": doc.id, "email": doc.email});
+                };
+                res.status(401).json({"error":"Unauthorized"});
             });
 
         };
