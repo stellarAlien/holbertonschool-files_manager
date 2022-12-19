@@ -1,13 +1,13 @@
-const express = require('express');
-const { append } = require('express/lib/response');
-const process = require('process');
+import express from 'express';
+import Routes from './routes/index';
 
-require('./routes')(app);
+const app = express();
+const port = process.env.PORT || 5000;
 
+app.use(express.json());
+Routes(app);
+app.listen(port, () => {
+    console.log(`Listening on port ${port}`);
+    });
 
-port = process.env.PORT;
-
-
-app.listen(port, (req, res)=>{
-
-});
+    export default app;
