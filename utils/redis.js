@@ -19,16 +19,13 @@ class RedisClient {
     return value;
   }
 
-
   async set(key, value, duration) {
-    this.client.setex(key, duration, value); //set(key, value, 'EX', -1, redis.print) to not use expire in other files
-
+    this.client.setex(key, duration, value);
   }
 
   async del(key) {
     this.client.del(key);
   }
 }
-
 const redisClient = new RedisClient();
 export default redisClient;

@@ -1,40 +1,59 @@
-import { getMaxListeners } from "process";
-import { dbClient } from "../utils/db";
-const crypto = require('crypto');
+/* eslint-disable */
+import { ObjectId } from 'mongodb';
+import dbClient from '../utils/db';
+import redisClient from '../utils/redis';
 
-dbclient = dbClient();
+const sha1 = require('sha1');
 
-class UserController{
-    static postNew(req, res){
-        const {email, password} = req.body;
-        if(!email) res.status(400).json({error: 'Missing email'});
-        if(!password) res.status(400).json({error: 'Missing password'});
-        usr = dbClient.db.collection('users').find(email).toArray((err, docs)=>{
-            if (err) { console.log(err); }
-            res.status(400).json({"error": "Already exist"});
+// POST /users should create a new user in DB
+export async function postNew(req, res) {
 
-            hashed_password = crypto.createHash('sha1').update(password).digest(hex);
-
-            user = {'email': email, 'password': hashed_password};
-    
-            id = dbClient.db.collection('users').insertOne(user);
-            
-            res.status(201).json({"_id" : id,  "email": email, "password": hashed_password});
-            })}
-        
-    static getMe(req, res, next){
-        if(req.headers['X-Token']){ token = req.headers['X-Token'];}
-
-            dbClient.db.collection('users').find(token).toArray((err, doc)=>{
-                if(doc){
-                    res.json({"id": doc.id, "email": doc.email});
-                };
-                res.status(401).json({"error":"Unauthorized"});
+    try {
+        const userEmail = req.body.email;
+        if (!userEmail) {
+            return res.status(400).send({
+                error: 'Missing email',
             });
+        }
 
+        const userPassword = req.body.password;
+        if (!userPassword) {
+            return res.status(400).send({
+                error: 'Missing password',
+            });
+        }
+
+        let existingEmail = await dbClient.db.collection('users').findOne({ email: userEmail });
+        if (existingEmail) {
+            return res.status(400).send({
+                error: 'Already exist',
+            });
+        }
+
+        let userId;
+        const hashedPw = sha1(userPassword);
+        const newUser = {
+            email: userEmail,
+            password: hashedPw,
         };
+
+        try {
+            await dbClient.db.collection('users').insertOne(newUser, (err) => {
+                userId = newUser._id;
+                return res.status(201).send({
+                    email: userEmail,
+                    id: userId,
+                });
+            });
+        } catch (err) {
+            return res.status(err.status).send({
+                'error': err,
+            });
+        }
+
+    } catch (error) {
+        return res.status(500).send({
+            error: 'Server error',
+        });
     }
-
-       
-
-export {UserController as UserController};
+}
