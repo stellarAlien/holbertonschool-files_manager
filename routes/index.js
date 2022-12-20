@@ -1,10 +1,21 @@
+/* eslint-disable */
 import express from 'express';
 import AppController from '../controllers/AppController';
 import UsersController from '../controllers/UsersController';
 
-const router = express.Router();
+export default function Routes(app) {
+  const router = express.Router();
+  app.use('/', router);
 
-router.get('/', AppController.index);
-router.post('/users', UsersController.create);
+  router.get('/status', (req, res) => {
+    AppController.getStatus(req, res);
+  });
 
-export default router;
+  router.get('/stats', (req, res) => {
+    AppController.getStats(req, res);
+  });
+
+  router.post('/users', (req, res) => {
+    UsersController.postNew(req, res);
+  });
+}
