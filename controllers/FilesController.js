@@ -48,7 +48,7 @@ class FilesController{
         
         const userId = session;
         folder_insert = {
-            userId: ObjectId(userId),
+            userId: ObjectID(userId),
             name,
             type,
             isPublic: isPublic,
@@ -74,10 +74,28 @@ class FilesController{
         }
         fs.writeFile(`${path}/${new_file}`, data, err =>{
             if (err) { return console.log(err); }
-            return true; 
+            return true;
+            return 
+        });
+        
+        const file = files.inserOne({
+            name,
+            type,
+            userId: ObjectID(userId),
+            parentId: parentObjectid,
+            isPublic: isPublic,
+            data: data,
+            localPath: `${path}/${new_file}`,
         });
 
-
+        return res.status(201).json({
+            id: file.ops[0]._id,
+            userId: files.ops[0].userId,
+            name: file.ops[0].name,
+            type: file.ops[0].type,
+            isPublic: file.ops[0].isPublic,
+            parentId: file.ops[0].parentId,
+        });
         }
     }
         
