@@ -22,6 +22,7 @@ class FilesController{
         const session = await redisClient.get(`auth_${token}`);
         if (!session) { res.stasus(401).json({error: 'Unathorized'}); }
 
+
         // parsing file data
         const {name} = req.body.name; 
         const  {type} = req.body.type;
@@ -72,10 +73,17 @@ class FilesController{
         if (!fs.existsSync(storage_path)) { 
             fs.mkdirSync(path, { recursive: true});
         }
-        fs.writeFile(`${path}/${new_file}`, data, err =>{
-            if (err) { return console.log(err); }
-            return true;
-            return 
+        fs.mkdir(localStorage, async() => {
+            if(folder_insert.type == 'image') {
+                const q = new Queue('fileQueue');
+                await q.add({ userId: file.userId, fileId: folder_insert.userId});
+                fs.writeFile(`${path}/${new_file}`, data, err => {
+                    if (err) { return console.log(err); }
+                })
+            }
+         else { fs.writeFile(`${path}/${new_file}`, data, err =>{ 
+            if (err) { return console.log(err); }})
+            } 
         });
         
         const file = files.inserOne({
